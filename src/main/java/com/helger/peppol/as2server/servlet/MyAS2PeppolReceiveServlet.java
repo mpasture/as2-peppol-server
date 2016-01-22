@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Philip Helger (www.helger.com)
+ * Copyright (C) 2014-2016 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,25 +22,31 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
 
-import com.helger.as2servlet.AS2PeppolReceiveServlet;
+import com.helger.as2servlet.AS2ReceiveServlet;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.system.SystemProperties;
 
 /**
- * Special version of the {@link AS2PeppolReceiveServlet} customizing the path
- * to the AS2 data file
+ * Special version of the {@link AS2ReceiveServlet} customizing the path to the
+ * AS2 data file. The absolute path to the configuration file can be provided
+ * using the "ap.server.config.path" system property.
  *
  * @author Philip Helger
  */
-public class MyAS2PeppolReceiveServlet extends AS2PeppolReceiveServlet
+public class MyAS2PeppolReceiveServlet extends AS2ReceiveServlet
 {
+  public static final String DEFAULT_CONFIG_FILENAME = "as2-server-data/as2-server-config.xml";
+
   @Override
   @Nonnull
   protected File getConfigurationFile () throws ServletException
   {
-    // Customize the path - e.g. read from a config file
-    final String sConfigurationFilename = "as2-server-data/as2-server-config.xml";
+    String sConfigurationFilename = SystemProperties.getPropertyValue ("ap.server.config.path");
     if (StringHelper.hasNoText (sConfigurationFilename))
-      throw new ServletException ("Configuration filename is missing or empty!");
+    {
+      // Default value
+      sConfigurationFilename = DEFAULT_CONFIG_FILENAME;
+    }
 
     try
     {

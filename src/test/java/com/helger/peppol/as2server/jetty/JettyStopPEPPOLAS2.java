@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Philip Helger (www.helger.com)
+ * Copyright (C) 2014-2016 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,16 +25,13 @@ import java.net.Socket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.io.streams.StreamUtils;
-
 public final class JettyStopPEPPOLAS2
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (JettyStopPEPPOLAS2.class);
 
   public static void main (final String [] args) throws IOException
   {
-    final Socket s = new Socket (InetAddress.getByName (null), JettyMonitor.STOP_PORT);
-    try
+    try (final Socket s = new Socket (InetAddress.getByName (null), JettyMonitor.STOP_PORT))
     {
       s.setSoLinger (false, 0);
 
@@ -46,10 +43,6 @@ public final class JettyStopPEPPOLAS2
     catch (final ConnectException ex)
     {
       s_aLogger.warn ("Jetty is not running");
-    }
-    finally
-    {
-      StreamUtils.close (s);
     }
   }
 }

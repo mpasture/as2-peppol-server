@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014-2015 Philip Helger (www.helger.com)
+ * Copyright (C) 2014-2016 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,15 +24,15 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import org.w3c.dom.Element;
 
 import com.helger.as2lib.exception.OpenAS2Exception;
-import com.helger.as2servlet.sbd.IAS2IncomingSBDHandlerSPI;
-import com.helger.commons.annotations.IsSPIImplementation;
-import com.helger.commons.jaxb.validation.CollectingValidationEventHandler;
+import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.log.InMemoryLogger;
-import com.helger.peppol.sbdh.DocumentData;
-import com.helger.peppol.sbdh.read.DocumentDataReader;
-import com.helger.ubl.EUBL21DocumentType;
-import com.helger.ubl.UBL21DocumentTypes;
-import com.helger.ubl.UBL21Marshaller;
+import com.helger.jaxb.validation.CollectingValidationEventHandler;
+import com.helger.peppol.as2servlet.IAS2IncomingSBDHandlerSPI;
+import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
+import com.helger.ubl21.EUBL21DocumentType;
+import com.helger.ubl21.UBL21DocumentTypes;
+import com.helger.ubl21.UBL21ReaderBuilder;
 
 @IsSPIImplementation
 public class AS2IncomingSBDHandler implements IAS2IncomingSBDHandlerSPI
@@ -43,7 +43,7 @@ public class AS2IncomingSBDHandler implements IAS2IncomingSBDHandlerSPI
   {
     final InMemoryLogger aErrors = new InMemoryLogger ();
 
-    final DocumentData aDocumentData = new DocumentDataReader ().extractData (aStandardBusinessDocument);
+    final PeppolSBDHDocument aDocumentData = new PeppolSBDHDocumentReader ().extractData (aStandardBusinessDocument);
     final Element aElement = aDocumentData.getBusinessMessage ();
 
     // Try to determine the UBL document type from the namespace URI
@@ -56,9 +56,7 @@ public class AS2IncomingSBDHandler implements IAS2IncomingSBDHandlerSPI
     {
       // Try to read the UBL document - performs implicit XSD validation
       final CollectingValidationEventHandler aEventHdl = new CollectingValidationEventHandler ();
-      final Object aUBLDocument = UBL21Marshaller.readUBLDocument (aElement,
-                                                                   eDocType.getImplementationClass (),
-                                                                   aEventHdl);
+      final Object aUBLDocument = UBL21ReaderBuilder.createGeneric (eDocType).setValidationEventHandler (aEventHdl).read (aElement);
       if (aUBLDocument == null)
       {
         aErrors.error ("Failed to read the UBL document as " +

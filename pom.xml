@@ -1,6 +1,6 @@
 <!--
 
-    Copyright (C) 2014-2015 Philip Helger (www.helger.com)
+    Copyright (C) 2014-2016 Philip Helger (www.helger.com)
     philip[at]helger[dot]com
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>1.3.3</version>
+    <version>1.4.1</version>
   </parent>
   <artifactId>as2-peppol-server</artifactId>
   <version>1.0.0-SNAPSHOT</version>
@@ -60,63 +60,99 @@
       <url>http://www.helger.com</url>
     </developer>
   </developers>
-
-  <repositories>
-    <repository>
-      <id>joinup.nexus</id>
-      <url>https://joinup.ec.europa.eu/nexus/content/repositories/releases/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
   
   <properties>
     <m2e.jaxrs.activation>false</m2e.jaxrs.activation>
     <m2e.jpa.activation>false</m2e.jpa.activation>
     <m2e.jsf.activation>false</m2e.jsf.activation>
-    <cipa.version>2.2.3</cipa.version>
+    <log4j.version>2.5</log4j.version>
+    <jetty.version>9.2.14.v20151106</jetty.version>
   </properties>
+
+  <repositories>
+    <repository>
+      <id>java-net</id>
+      <url>https://maven.java.net/content/repositories/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>ph-commons-parent-pom</artifactId>
+        <version>6.2.3</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>ph-datetime-parent-pom</artifactId>
+        <version>4.2.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>as2-lib-parent-pom</artifactId>
+        <version>2.2.5</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>peppol-commons-parent-pom</artifactId>
+        <version>4.3.3</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>ph-ubl-parent-pom</artifactId>
+        <version>4.5.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
-      <groupId>eu.europa.ec.cipa</groupId>
-      <artifactId>cipa-smp-client-library</artifactId>
-      <version>${cipa.version}</version>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-commons</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger</groupId>
       <artifactId>as2-lib</artifactId>
-      <version>1.0.7</version>
     </dependency>  
     <dependency>
       <groupId>com.helger</groupId>
-      <artifactId>peppol-sbdh</artifactId>
-      <version>1.0.1</version>
-    </dependency>
+      <artifactId>as2-servlet</artifactId>
+    </dependency>  
     <dependency>
       <groupId>com.helger</groupId>
       <artifactId>as2-peppol-servlet</artifactId>
-      <version>1.0.1</version>
+      <version>3.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.helger</groupId>
-      <artifactId>ph-ubl</artifactId>
-      <version>3.3.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.helger</groupId>
-          <artifactId>ph-ubl20</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.helger</groupId>
-          <artifactId>ph-ubl20-codelists</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>peppol-sbdh</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-ubl21</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>peppol-smp-client</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
@@ -124,37 +160,44 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.1</version>
+      <version>${log4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <version>2.1</version>
+      <version>${log4j.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-webapp</artifactId>
-      <version>8.1.16.v20140903</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jsp-2.1-glassfish</artifactId>
-      <version>2.1.v20100127</version>
-      <scope>test</scope>
-    </dependency>
-    
-    <!-- Must be after Jetty -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-webapp</artifactId>
+      <version>${jetty.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- Try avoid download maven-metadata.xml all the time -->
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.el</artifactId>
+      <version>3.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-jsp</artifactId>
+      <version>${jetty.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish</groupId>
+          <artifactId>javax.el</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   
@@ -173,5 +216,16 @@
         <targetPath>${project.build.directory}/test-classes</targetPath>
       </resource>
     </resources>
+    
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.7</source>
+          <target>1.7</target>
+        </configuration>
+      </plugin>
+    </plugins>  
   </build>
 </project>
